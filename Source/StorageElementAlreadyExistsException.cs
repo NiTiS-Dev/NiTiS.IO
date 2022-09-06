@@ -1,11 +1,20 @@
 ﻿namespace NiTiS.IO;
 
-public sealed class StorageElementAlreadyExistsException : Exception
+public sealed class DirectoryAlreadyExistsException : Exception
 {
-	public IStorageElement StorageElement { get; private set; }
-	public StorageElementAlreadyExistsException(IStorageElement storageElement)
+	public Directory Directory { get; }
+	public DirectoryAlreadyExistsException(Directory directory)
 	{
-		this.StorageElement = storageElement;
+		Directory = directory;
 	}
-	public override string Message => $"Storage element already exists by path {StorageElement.Path}";
+	public override string Message => $"Directory already exists by path {Directory.Path}";
+}
+public sealed class FileAlreadyExistsException : Exception
+{
+	public File File { get; }
+	public FileAlreadyExistsException(File file)
+	{
+		File = file;
+	}
+	public override string Message => $"File already exists by path {File.Path}";
 }

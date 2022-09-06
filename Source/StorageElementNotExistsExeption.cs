@@ -1,11 +1,20 @@
 ﻿namespace NiTiS.IO;
 
-public sealed class StorageElementNotExistsExeption : Exception
+public sealed class DirectoryNotExistsExeption : Exception
 {
-	public IStorageElement StorageElement { get; private set; }
-	public StorageElementNotExistsExeption(IStorageElement storageElement)
+	public Directory Directory { get; }
+	public DirectoryNotExistsExeption(Directory directory)
 	{
-		this.StorageElement = storageElement;
+		Directory = directory;
 	}
-	public override string Message => $"Storage element not found by path {StorageElement.Path}";
+	public override string Message => $"Directory not found by path {Directory.Path}";
+}
+public sealed class FileNotExistsExeption : Exception
+{
+	public File File { get; }
+	public FileNotExistsExeption(File file)
+	{
+		File = file;
+	}
+	public override string Message => $"File not found by path {File.Path}";
 }

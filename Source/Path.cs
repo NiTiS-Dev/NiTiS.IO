@@ -12,10 +12,12 @@ public abstract class Path
 	public static char PathSeparator => SPath.PathSeparator;
 	public static char[] InvalidPathChars => SPath.GetInvalidPathChars();
 	public static char[] InvalidFileNameChars => SPath.GetInvalidFileNameChars();
+	public abstract MemorySize Size { get; }
 	public Path(string path)
 	{
 		this.path = path;
 	}
-	public static bool CheckValidPath(Path path) => CheckValidPath(path.path);
-	public static bool CheckValidPath(string path) => path.All(x => !InvalidPathChars.Contains(x)) && path.Split(DirectorySeparator).Last().All(x => InvalidFileNameChars.Contains(x));
+	public abstract bool IsExists();
+	public static bool IsPathValid(Path path) => IsPathValid(path.path);
+	public static bool IsPathValid(string path) => path.All(x => !InvalidPathChars.Contains(x)) && path.Split(DirectorySeparator).Last().All(x => InvalidFileNameChars.Contains(x));
 }

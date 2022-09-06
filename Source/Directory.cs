@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace NiTiS.IO;
 
@@ -6,14 +7,14 @@ namespace NiTiS.IO;
 /// Presentation of some directory
 /// </summary>
 [System.Diagnostics.DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-public sealed class Directory : Path, IStorageElement
+public sealed class Directory : NamedPath
 {
 	public Directory(params string[] path) : base(Combine(path)) { }
 	public Directory(string path) : base(path) { }
 	public Directory(Directory directory, string directoryName) : base(Combine(directory.Path, directoryName)) { }
 	public Directory(File file) : base(file.Parent.path) { }
 	public string Path => this.path;
-	public string Name => SPath.GetFileName(this.path);
+	public override string Name => SPath.GetFileName(this.path);
 	/// <summary>
 	/// Directory where located this directory
 	/// </summary>
@@ -28,14 +29,26 @@ public sealed class Directory : Path, IStorageElement
 				info = SDir.GetParent(this.path);
 			}
 			catch (System.IO.DirectoryNotFoundException) { }
-			return info is null ? throw new RootFolderNotFoundException(this) : (new(info.FullName));
+			return info is null ? throw new DirectoryNotExistsExeption(this) : (new(info.FullName));
 		}
 	}
 	public DateTime CreationTime { get => SDir.GetCreationTime(this.path); set => SDir.SetCreationTime(this.path, value); }
 	public DateTime LastAccessTime { get => SDir.GetLastAccessTime(this.path); set => SDir.SetLastAccessTime(this.path, value); }
 	public DateTime CreationTimeUTC { get => SDir.GetLastWriteTimeUtc(this.path); set => SDir.SetCreationTimeUtc(this.path, value); }
 	public DateTime LastAccessTimeUTC { get => SDir.GetLastAccessTimeUtc(this.path); set => SDir.SetLastAccessTime(this.path, value); }
-	public bool Exists => SDir.Exists(path);
+	public override bool IsExists() => SDir.Exists(path);
+
+	public override MemorySize Size
+	{
+		get
+		{
+			MemorySize size = new(GetDirectories().Select(s => s.Size).Sum(x => x.bytes));
+			MemorySize size2 = new(GetDirectories().Select(s => s.Size).Sum(x => x.bytes));
+
+			return size + size2;
+		}
+	}
+
 	/// <summary>
 	/// Create <see cref="IO.File"/> instance (without creating a real file)
 	/// </summary>
@@ -85,11 +98,11 @@ public sealed class Directory : Path, IStorageElement
 		return SDir.GetFiles(this.path).Select(s => new File(s)).ToArray();
 	}
 	/// <summary>
-	/// Create dictonary if not exists
+	/// Create directory if not exists
 	/// </summary>
 	public void Create()
 	{
-		if (Exists) return;
+		if (IsExists()) return;
 		SDir.CreateDirectory(this.path);
 	}
 	/// <summary>
@@ -101,7 +114,7 @@ public sealed class Directory : Path, IStorageElement
 	}
 	public void ThrowIfNotExists()
 	{
-		if (!Exists) throw new StorageElementNotExistsExeption(this);
+		if (!IsExists()) throw new DirectoryNotExistsExeption(this);
 	}
 	/// <summary>
 	/// Delete current file from storage
@@ -117,17 +130,17 @@ public sealed class Directory : Path, IStorageElement
 
 	public override string ToString()
 	{
-		return $"\"{this.path}\" [{(Exists ? "E" : "NE")}]";
+		return $"\"{this.path}\" [{(IsExists() ? "E" : "NE")}]";
 	}
 	private string GetDebuggerDisplay() => ToString();
 	/// <summary>
-	/// Returns <see langword="true"/> when all directories exists and notnull
+	/// Returns <see langword="true"/> when all directories exists and not null
 	/// </summary>
 	public static bool AllExists(params Directory[] directories)
 	{
 		foreach (Directory? directory in directories)
 		{
-			if (!(directory?.Exists ?? false)) return false;
+			if (!(directory?.IsExists() ?? false)) return false;
 		}
 		return true;
 	}

@@ -1,4 +1,5 @@
 ﻿namespace NiTiS.IO;
+
 public readonly struct MemorySize : IEquatable<MemorySize>, IEquatable<long>, IComparable<MemorySize>, IComparable<long>, IFormattable
 {
 	public readonly long bytes;

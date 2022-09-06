@@ -1,17 +1,19 @@
-﻿namespace NiTiS.IO;
+﻿using System.IO;
+
+namespace NiTiS.IO;
 
 /// <summary>
 /// Provides methods for action with existing file
 /// </summary>
 [System.Diagnostics.DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-public sealed class File : Path, IStorageElement
+public sealed class File : NamedPath
 {
 	public File(params string[] path) : base(Combine(path)) { }
 	public File(Directory parent, string fileName) : base(Combine(parent.Path, fileName)) { }
 	public File(string path) : base(path) { }
 	public string Path => path;
-	public MemorySize Size => Exists ? new( new System.IO.FileInfo(path).Length ) : MemorySize.Zero;
-	public string Name => SPath.GetFileName(path);
+	public override MemorySize Size => IsExists() ? new( new System.IO.FileInfo(path).Length ) : MemorySize.Zero;
+	public override string Name => SPath.GetFileName(path);
 	/// <summary>
 	/// Name of the element (extension exclude)
 	/// </summary>
@@ -23,7 +25,7 @@ public sealed class File : Path, IStorageElement
 	/// <summary>
 	/// Directory where located this file
 	/// </summary>
-	/// <exception cref="RootFolderNotFoundException"></exception>
+	/// <exception cref="System.IO.DirectoryNotFoundException"></exception>
 	public Directory Parent
 	{
 		get
@@ -34,14 +36,15 @@ public sealed class File : Path, IStorageElement
 				info = SDir.GetParent(path);
 			}
 			catch (System.IO.DirectoryNotFoundException) { }
-			return info is null ? throw new RootFolderNotFoundException(this) : (new(info.FullName));
+			return info is null ? throw new System.IO.DirectoryNotFoundException() : (new(info.FullName));
 		}
 	}
 	public DateTime CreationTime { get => SDir.GetCreationTime(path); set => SDir.SetCreationTime(path, value); }
 	public DateTime LastAccessTime { get => SDir.GetLastAccessTime(path); set => SDir.SetLastAccessTime(path, value); }
 	public DateTime CreationTimeUTC { get => SDir.GetLastWriteTimeUtc(path); set => SDir.SetCreationTimeUtc(path, value); }
 	public DateTime LastAccessTimeUTC { get => SDir.GetLastAccessTimeUtc(path); set => SDir.SetLastAccessTime(path, value); }
-	public bool Exists => SFile.Exists(path);
+	public override bool IsExists()
+		=> SFile.Exists(path);
 	/// <summary>
 	/// Renaming the file
 	/// </summary>
@@ -69,7 +72,7 @@ public sealed class File : Path, IStorageElement
 		{
 			Parent.Create();
 		}
-		if (Exists) return;
+		if (IsExists()) return;
 		SFile.Create(path).Dispose();
 	}
 	/// <summary>
@@ -79,14 +82,14 @@ public sealed class File : Path, IStorageElement
 	/// <exception cref="UnauthorizedAccessException"></exception>
 	/// <exception cref="NotSupportedException"></exception>
 	/// <exception cref="System.IO.IOException"></exception>
-	public System.IO.FileStream OpenForRead() => SFile.OpenRead(path);
+	public SFileStream OpenForRead() => SFile.OpenRead(path);
 	/// <summary>
 	/// Returns the stream to write the file
 	/// </summary>
 	/// <exception cref="System.IO.PathTooLongException"></exception>
 	/// <exception cref="UnauthorizedAccessException"></exception>
 	/// <exception cref="NotSupportedException"></exception>
-	public System.IO.FileStream OpenForWrite() => SFile.OpenWrite(path);
+	public SFileStream OpenForWrite() => SFile.OpenWrite(path);
 	/// <summary>
 	/// Returns the stream by options
 	/// </summary>
@@ -95,7 +98,7 @@ public sealed class File : Path, IStorageElement
 	/// <returns></returns>
 	/// <exception cref="StorageElementAlreadyExistsException"></exception>
 	/// <exception cref="ArgumentException"></exception>
-	public System.IO.FileStream Open(OpenType openType = OpenType.OpenOrCreate, FileAccess access = FileAccess.Full)
+	public SFileStream Open(OpenType openType = OpenType.OpenOrCreate, FileAccess access = FileAccess.Full)
 	{
 		switch (openType)
 		{
@@ -109,11 +112,11 @@ public sealed class File : Path, IStorageElement
 				}
 			case OpenType.New:
 				{
-					return Exists ? throw new StorageElementAlreadyExistsException(this) : SFile.Create(path);
+					return IsExists() ? throw new FileNotExistsExeption(this) : SFile.Create(path);
 				}
 			case OpenType.OpenOrCreate:
 				{
-					return Exists ? SFile.Open(path, System.IO.FileMode.Open, (System.IO.FileAccess)(byte)access) : SFile.Create(path);
+					return IsExists() ? SFile.Open(path, System.IO.FileMode.Open, (System.IO.FileAccess)(byte)access) : SFile.Create(path);
 				}
 			case OpenType.Append:
 				{
@@ -125,7 +128,7 @@ public sealed class File : Path, IStorageElement
 				}
 			default:
 				{
-					throw new ArgumentException($"Invalid falue of {openType} parameter");
+					throw new ArgumentException($"Invalid value of {openType} parameter");
 				}
 		}
 	}
@@ -176,7 +179,7 @@ public sealed class File : Path, IStorageElement
 	/// <param name="copy">Make copy or just create new file</param>
 	public File CreateBackupFile(string? path = null, bool copy = true)
 	{
-		(this as IStorageElement).ThrowIfNotExists();
+		ThrowIfNotExists();
 		path ??= this.path + ".bac";
 		File bac = new(path);
 		if (copy)
@@ -192,7 +195,7 @@ public sealed class File : Path, IStorageElement
 	/// </summary>
 	public byte[] ReadBytes()
 	{
-		(this as IStorageElement).ThrowIfNotExists();
+		ThrowIfNotExists();
 		return SFile.ReadAllBytes(path);
 	}
 	/// <summary>
@@ -200,7 +203,7 @@ public sealed class File : Path, IStorageElement
 	/// </summary>
 	public string ReadText()
 	{
-		(this as IStorageElement).ThrowIfNotExists();
+		ThrowIfNotExists();
 		return SFile.ReadAllText(path);
 	}
 	/// <summary>
@@ -208,7 +211,7 @@ public sealed class File : Path, IStorageElement
 	/// </summary>
 	public void WriteBytes(byte[] bytes)
 	{
-		(this as IStorageElement).ThrowIfNotExists();
+		ThrowIfNotExists();
 		SFile.WriteAllBytes(path, bytes);
 	}
 	/// <summary>
@@ -216,7 +219,7 @@ public sealed class File : Path, IStorageElement
 	/// </summary>
 	public void WriteText(string value)
 	{
-		(this as IStorageElement).ThrowIfNotExists();
+		ThrowIfNotExists();
 		SFile.WriteAllText(path, value);
 	}
 	/// <summary>
@@ -226,7 +229,7 @@ public sealed class File : Path, IStorageElement
 	/// <param name="destinationBackupFile">Backup for destination file</param>
 	public void Replace(File destinationFile, File? destinationBackupFile)
 	{
-		this.ThrowIfNotExists();
+		ThrowIfNotExists();
 		destinationFile.ThrowIfNotExists();
 		destinationBackupFile ??= destinationFile.CreateBackupFile();
 		destinationFile.CopyTo(destinationBackupFile);
@@ -240,7 +243,7 @@ public sealed class File : Path, IStorageElement
 	/// </summary>
 	public void Delete() => SFile.Delete(path);
 
-#if NITIS_IO_ASYNC
+#if NITIS_ASYNC
 	/// <summary>
 	/// Copies data from a file to another file asynchronously
 	/// (if the file does not exist, it will create a new one)
@@ -355,25 +358,25 @@ public sealed class File : Path, IStorageElement
 #endif
 	public void ThrowIfNotExists()
 	{
-		if (!Exists) throw new StorageElementNotExistsExeption(this);
+		if (!IsExists()) throw new FileNotExistsExeption(this);
 	}
 
 	public override string ToString()
 	{
-		return $"\"{path}\" [{(Exists ? "E" : "NE")}]";
+		return $"\"{path}\" [{(IsExists() ? "E" : "NE")}]";
 	}
 	private string GetDebuggerDisplay()
 	{
 		return ToString();
 	}
 	/// <summary>
-	/// Returns <see langword="true"/> when all files exists and notnull
+	/// Returns <see langword="true"/> when all files exists and not null
 	/// </summary>
 	public static bool AllExists(params File?[] files)
 	{
 		foreach(File? file in files)
 		{
-			if (!(file?.Exists ?? false)) return false;
+			if (!(file?.IsExists() ?? false)) return false;
 		}
 		return true;
 	}
