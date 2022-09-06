@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>NiTiS.IO</AssemblyName>
+		<Version>2.0.1</Version>
+		<AssemblyVersion>$(Version)</AssemblyVersion>
+		<TargetFrameworks>net6.0;netstandard2.1;netcoreapp3.1;net5.0;net48</TargetFrameworks>
+
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+		<Description>
+			Library for managing files, directories and streamen
+		</Description>
+		
+		<PackageTags>NiTiS;IO;File</PackageTags>
+		<PackageVersion>$(Version)</PackageVersion>
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>embedded</DebugType>
+		<RepositoryUrl>https://github.com/NiTiS-Dev/NiTiS.IO</RepositoryUrl>
+		<PackageIconUrl>https://raw.githubusercontent.com/NiTiS-Dev/meta/singleton/ntscr/interaction/original.png</PackageIconUrl>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="NiTiS.Additions" Version="2.2.2.5" />
+	</ItemGroup>
+</Project>
