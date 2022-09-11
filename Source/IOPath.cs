@@ -1,19 +1,28 @@
-﻿namespace NiTiS.IO;
+﻿using System.Runtime.Serialization;
 
-public abstract class IOPath
+namespace NiTiS.IO;
+
+public abstract class IOPath : ISerializable
 {
-	public readonly string InitPath;
-	protected IOPath(string path)
-	{
-		InitPath = path;
-	}
-	public abstract string? Name { get; }
-	public abstract string? Path { get; }
+	public abstract string Name { get; }
+	public abstract string Path { get; }
 	public abstract bool IsDirectory { get; }
 	public abstract Directory? Parent { get; }
 	public abstract bool Exists { get; }
 	public abstract bool Readonly { get; }
 	public abstract bool Hidden { get; }
 	public override string ToString()
-		=> InitPath;
+		=> Path;
+	public void GetObjectData(SerializationInfo info, StreamingContext context)
+	{
+		info.AddValue("path", Path);
+		info.AddValue("directory", IsDirectory);
+	}
+#if NET7_0_OR_GREATER
+ 	public static T Combine<T>(Directory dir, params string[] args) where T : IOPath
+		=> new T()
+#endif
+	public const char UnixPathSeparator = ':';
+	public const char WindowsPathSeparator = ';';
+	public static readonly char PathSeparator = SPath.PathSeparator;
 }

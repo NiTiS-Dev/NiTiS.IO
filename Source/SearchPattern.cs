@@ -2,6 +2,9 @@
 
 namespace NiTiS.IO;
 
+/// <summary>
+/// Glob pattern
+/// </summary>
 public ref struct SearchPattern
 {
 	private readonly Matcher matcher;
