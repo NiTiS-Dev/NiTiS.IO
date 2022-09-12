@@ -96,6 +96,16 @@ public class File : IOPath, ISerializable
 			return false;
 		}
 	}
+	public SFileStream Open(FileMode mode)
+		=> self.Open((System.IO.FileMode)mode);
+	public SFileStream Read()
+		=> self.OpenRead();
+	public SFileStream Write()
+		=> self.OpenWrite();
+	public SFileStream Append()
+		=> self.Open(System.IO.FileMode.Append);
+	public SFileStream Truncate()
+		=> self.Open(System.IO.FileMode.Truncate);
 	/// <summary>
 	/// Creates a file symbolic link identified by <paramref name="linkFile"/> that points to <see langword="this"/>
 	/// </summary>
