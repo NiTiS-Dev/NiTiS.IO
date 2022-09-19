@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AssemblyName>NiTiS.IO.Windows</AssemblyName>
-		<Version>$(Version)</Version>
-		<AssemblyVersion>$(Version)</AssemblyVersion>
 
 		<Description>
 			Library for managing files, directories and streams (extension for windows)
