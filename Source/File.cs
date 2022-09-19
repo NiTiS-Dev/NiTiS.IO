@@ -1,9 +1,6 @@
-﻿using NiTiS.IO.Windows;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-using System.Runtime.Versioning;
 
 namespace NiTiS.IO;
 
@@ -13,7 +10,7 @@ namespace NiTiS.IO;
 [Serializable]
 public class File : IOPath, ISerializable
 {
-	private FileInfo self;
+	protected internal FileInfo self;
 	public File(string path) : base()
 	{
 		self = new(path);
@@ -106,28 +103,6 @@ public class File : IOPath, ISerializable
 		=> self.Open(System.IO.FileMode.Append);
 	public SFileStream Truncate()
 		=> self.Open(System.IO.FileMode.Truncate);
-	/// <summary>
-	/// Creates a file symbolic link identified by <paramref name="linkFile"/> that points to <see langword="this"/>
-	/// </summary>
-	/// <param name="linkFile">File path to place link</param>
-	/// <returns>Symbolic link</returns>
-	/// <exception cref="IOException" />
-#if NET5_0_OR_GREATER
-	[SupportedOSPlatform("Windows")]
-#endif
-	[DebuggerStepThrough]
-	public File CreateSymbolicLink(File linkFile)
-	{
-		if (1 != WindowsAPI.CreateSymbolicLink(linkFile.Path, self.FullName, SymbolicLinkOptions.ToFile))
-		{
-			int errCode = Marshal.GetLastWin32Error();
-			if (errCode == 183)
-				throw new IOException("File already exists");
-			throw new IOException("Unable to create symbolic link, error code: " + errCode);
-		}
-
-		return linkFile;
-	}
 
 	public static explicit operator Directory(File dir)
 		=> new(dir.Path);

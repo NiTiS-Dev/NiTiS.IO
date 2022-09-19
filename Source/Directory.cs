@@ -1,10 +1,7 @@
-﻿using NiTiS.IO.Windows;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using System.Runtime.Versioning;
 
 namespace NiTiS.IO;
@@ -15,7 +12,7 @@ namespace NiTiS.IO;
 [Serializable]
 public class Directory : IOPath
 {
-	private DirectoryInfo self;
+	protected internal DirectoryInfo self;
 	public Directory(string path) : base()
 	{
 		self = new(path);
@@ -100,28 +97,6 @@ public class Directory : IOPath
 		{
 			return false;
 		}
-	}
-	/// <summary>
-	/// Creates a file symbolic link identified by <paramref name="linkFile"/> that points to <see langword="this"/>
-	/// </summary>
-	/// <param name="linkFile">File path to place link</param>
-	/// <returns>Symbolic link</returns>
-	/// <exception cref="IOException" />
-#if NET5_0_OR_GREATER
-	[SupportedOSPlatform("Windows")]
-#endif
-	[DebuggerStepThrough]
-	public Directory CreateSymbolicLink(File linkFile)
-	{
-		if (1 != WindowsAPI.CreateSymbolicLink(linkFile.Path, self.FullName, SymbolicLinkOptions.ToDirectory))
-		{
-			int errCode = Marshal.GetLastWin32Error();
-			if (errCode == 183)
-				throw new IOException("File or Directory already exists");
-			throw new IOException("Unable to create symbolic link, error code: " + errCode);
-		}
-
-		return new(linkFile.Path);
 	}
 
 	public static explicit operator File(Directory dir)

@@ -17,17 +17,17 @@ internal static class WindowsAPI
 #if NET5_0_OR_GREATER
 	[SupportedOSPlatform("Windows")]
 #endif
-	internal static extern DriveType GetDriveType(string path);
+	public static extern DriveType GetDriveType(string path);
 
 	[DllImport("kernel32.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
 #if NET5_0_OR_GREATER
 	[SupportedOSPlatform("Windows")]
 #endif
-	internal static extern int CreateSymbolicLink(string path, string destPath, SymbolicLinkOptions flags);
+	public static extern int CreateSymbolicLink(string path, string destPath, SymbolicLinkOptions flags);
 
 	[DllImport("kernel32.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
 #if NET5_0_OR_GREATER
 	[SupportedOSPlatform("Windows")]
 #endif
-	internal static extern uint GetLastError();
+	public static extern uint GetLastError();
 }

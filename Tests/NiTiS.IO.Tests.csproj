@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NiTiS.IO.Windows\NiTiS.IO.Windows.csproj" />
     <ProjectReference Include="..\Source\NiTiS.IO.csproj" />
   </ItemGroup>
 

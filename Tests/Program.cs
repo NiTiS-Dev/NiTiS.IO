@@ -1,6 +1,4 @@
-﻿using NiTiS.IO.Windows;
-
-namespace NiTiS.IO.Tests;
+﻿namespace NiTiS.IO.Tests;
 
 internal class Program
 {

@@ -14,6 +14,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        project: ["NiTiS.IO", "NiTiS.IO.Windows"]
     
     steps:
       - uses: actions/checkout@v2      
@@ -28,18 +32,20 @@ jobs:
       - name: Artifact Pack 
         uses: actions/upload-artifact@v2
         with:
-          path: .build/*.dll
+          name: ${{ matrix.project }}
+          path: .build/${{ matrix.project }}.dll
           
       - name: Github Upload
         run: |
           cd .pack/
-          dotnet nuget push *.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${GITHUB_TOKEN} --skip-duplicate
+          dotnet nuget push ${{ matrix.project }}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${GITHUB_TOKEN} --skip-duplicate
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Nuget Upload
         run: |
           cd .pack/
-          dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN} --skip-duplicate
+          dotnet nuget push ${{ matrix.project }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN} --skip-duplicate
         env:
           NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
