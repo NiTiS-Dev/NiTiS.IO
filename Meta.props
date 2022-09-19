@@ -7,7 +7,7 @@
 		<PackageVersion>$(Version)</PackageVersion>
 
 		<Copyright>Copyright (c) NiTiS-Dev and contributors</Copyright>
-		<PackageLicenseFile>../LICENSE</PackageLicenseFile>
+		<PackageLicenseUrl>https://raw.githubusercontent.com/NiTiS-Dev/NiTiS.IO/singleton/LICENSE</PackageLicenseUrl>
 
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
