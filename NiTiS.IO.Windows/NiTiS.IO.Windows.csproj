@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="../Meta.props" />
 	<PropertyGroup>
 		<AssemblyName>NiTiS.IO.Windows</AssemblyName>
 		<Version>$(Version)</Version>
@@ -9,12 +8,13 @@
 			Library for managing files, directories and streams (extension for windows)
 		</Description>
 
-		<PackageTags>NiTiS;IO;File;Windows;NTSFFS</PackageTags>
-		<RepositoryUrl>https://github.com/NiTiS-Dev/NiTiS.IO</RepositoryUrl>
-		<PackageIconUrl>https://raw.githubusercontent.com/NiTiS-Dev/meta/singleton/ntscr/interaction/original.png</PackageIconUrl>
+		<PackageTags>NiTiS;IO;File;Directory;Windows;NTFS</PackageTags>
 	</PropertyGroup>
+	
+	<Import Project="../Meta.props" />
+	
 	<ItemGroup>
-	  <ProjectReference Include="..\NiTiS.IO\NiTiS.IO.csproj" />
+		<ProjectReference Include="..\NiTiS.IO\NiTiS.IO.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,24 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="../Meta.props"/>
 	<PropertyGroup>
 		<AssemblyName>NiTiS.IO</AssemblyName>
-		<Version>$(Version)</Version>
-		<AssemblyVersion>$(Version)</AssemblyVersion>
-		<TargetFrameworks>net6.0;netstandard2.1;netcoreapp3.1;net5.0;net48</TargetFrameworks>
-
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
 		<Description>
 			Library for managing files, directories and streams
 		</Description>
 		
-		<PackageTags>NiTiS;IO;File</PackageTags>
-		<PackageVersion>$(Version)</PackageVersion>
-		<DebugSymbols>true</DebugSymbols>
-		<DebugType>embedded</DebugType>
-		<RepositoryUrl>https://github.com/NiTiS-Dev/NiTiS.IO</RepositoryUrl>
-		<PackageIconUrl>https://raw.githubusercontent.com/NiTiS-Dev/meta/singleton/ntscr/interaction/original.png</PackageIconUrl>
+		<PackageTags>NiTiS;IO;File;Directory</PackageTags>
 	</PropertyGroup>
+	
+	<Import Project="../Meta.props"/>
 </Project>
