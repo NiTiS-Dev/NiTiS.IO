@@ -1,5 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="../Meta.props"/>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="../Meta.props" />
 	<PropertyGroup>
 		<AssemblyName>NiTiS.IO.Windows</AssemblyName>
 		<Version>$(Version)</Version>
@@ -13,9 +13,5 @@
 		<RepositoryUrl>https://github.com/NiTiS-Dev/NiTiS.IO</RepositoryUrl>
 		<PackageIconUrl>https://raw.githubusercontent.com/NiTiS-Dev/meta/singleton/ntscr/interaction/original.png</PackageIconUrl>
 	</PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Source\NiTiS.IO.csproj" />
-  </ItemGroup>
 
 </Project>

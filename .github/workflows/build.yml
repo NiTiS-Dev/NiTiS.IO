@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v2      
       - name: Build
         run: |
-          cd Source/
+          cd ${{ matrix.project }}/
           dotnet clean
           dotnet restore
           dotnet build /m:1 -c Release -o ../.build/${{ matrix.project }}/
