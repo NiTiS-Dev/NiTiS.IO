@@ -26,19 +26,19 @@ jobs:
           cd Source/
           dotnet clean
           dotnet restore
-          dotnet build /m:1 -c Release -o ../.build/
-          dotnet pack /m:1 -c Release -o ../.pack/
+          dotnet build /m:1 -c Release -o ../.build/${{ matrix.project }}/
+          dotnet pack /m:1 -c Release -o ../.pack/${{ matrix.project }}/
           
       - name: Artifact Pack 
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.project }}
-          path: .build/${{ matrix.project }}.dll
+          path: .build/${{ matrix.project }}/*.dll
           
       - name: Github Upload
         run: |
           cd .pack/
-          dotnet nuget push ${{ matrix.project }}.*.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${GITHUB_TOKEN} --skip-duplicate
+          dotnet nuget push ${{ matrix.project }}/*.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${GITHUB_TOKEN} --skip-duplicate
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -46,6 +46,6 @@ jobs:
       - name: Nuget Upload
         run: |
           cd .pack/
-          dotnet nuget push ${{ matrix.project }}.*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN} --skip-duplicate
+          dotnet nuget push ${{ matrix.project }}/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN} --skip-duplicate
         env:
           NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}

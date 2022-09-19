@@ -7,6 +7,8 @@
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
+		<TargetName>$(AssemblyName)</TargetName>
+
 		<PackageVersion>$(Version)</PackageVersion>
 		<DebugSymbols>true</DebugSymbols>
 		<DebugType>embedded</DebugType>
