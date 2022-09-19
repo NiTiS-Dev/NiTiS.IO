@@ -9,9 +9,12 @@
 			Library for managing files, directories and streams (extension for windows)
 		</Description>
 
-		<PackageTags>NiTiS;IO;File;Windows</PackageTags>
+		<PackageTags>NiTiS;IO;File;Windows;NTSFFS</PackageTags>
 		<RepositoryUrl>https://github.com/NiTiS-Dev/NiTiS.IO</RepositoryUrl>
 		<PackageIconUrl>https://raw.githubusercontent.com/NiTiS-Dev/meta/singleton/ntscr/interaction/original.png</PackageIconUrl>
 	</PropertyGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\NiTiS.IO\NiTiS.IO.csproj" />
+	</ItemGroup>
 
 </Project>
