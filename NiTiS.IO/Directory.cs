@@ -10,7 +10,7 @@ namespace NiTiS.IO;
 /// Presentation of some directory
 /// </summary>
 [Serializable]
-public class Directory : IOPath
+public class Directory : IOPath, IFormattable
 {
 	protected internal DirectoryInfo self;
 	public Directory(string path) : base()
@@ -98,7 +98,22 @@ public class Directory : IOPath
 			return false;
 		}
 	}
-
+	public string ToString(string? format, IFormatProvider? formatProvider)
+		=> ToString(format);
+	public string ToString(string format)
+	{
+		if (format == nameof(Name))
+		{
+			return Name;
+		}
+		if (format == nameof(Path))
+		{
+			return Path;
+		}
+		throw new ArgumentException("Invalid format");
+	}
+	public override string ToString()
+		=> Path;
 	public static explicit operator File(Directory dir)
 		=> new(dir.Path);
 	public static explicit operator String(Directory dir)

@@ -8,7 +8,7 @@ namespace NiTiS.IO;
 /// Provides methods for action with existing file
 /// </summary>
 [Serializable]
-public class File : IOPath, ISerializable
+public class File : IOPath, ISerializable, IFormattable
 {
 	protected internal FileInfo self;
 	public File(string path) : base()
@@ -103,6 +103,39 @@ public class File : IOPath, ISerializable
 		=> self.Open(System.IO.FileMode.Append);
 	public SFileStream Truncate()
 		=> self.Open(System.IO.FileMode.Truncate);
+	public string ToString(string? format, IFormatProvider? formatProvider)
+		=> ToString(format);
+	public string ToString(string? format)
+	{
+		if (format == null)
+			return ToString();
+
+		if (format.StartsWith("Size"))
+		{
+			format = format.Substring(4);
+			if (format.StartsWith(':'))
+			{
+				format = format.Substring(1);
+				return Size.ToString(format);
+			}
+			return Size.ToString();
+		}
+		if (format == nameof(Name))
+		{
+			return Name;
+		}
+		if (format == nameof(Path))
+		{
+			return Path;
+		}
+		if (format == nameof(Extension))
+		{
+			return Extension;
+		}
+		throw new ArgumentException("Invalid format");
+	}
+	public override string ToString()
+		=> Path;
 
 	public static explicit operator Directory(File dir)
 		=> new(dir.Path);

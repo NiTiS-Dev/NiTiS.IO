@@ -80,7 +80,22 @@ public readonly struct MemorySize : IEquatable<MemorySize>, IEquatable<long>, IC
 	/// <returns></returns>
 	public string ToString(string? format)
 	{
-		format ??= "B";
+		if (String.IsNullOrEmpty(format))
+			format = "B";
+
+		string decFormat = String.Empty;
+
+		// Improved formatting
+		{
+			int vosklSymbl = format.IndexOf('!');
+
+			if (vosklSymbl != -1)
+			{
+				decFormat = format.Substring(vosklSymbl + 1);
+				format = format.Substring(0, vosklSymbl);
+			}
+		}
+
 		decimal dec = format switch
 		{
 			"B" => GetByFormat(SizeFormat.Byte),
@@ -96,7 +111,7 @@ public readonly struct MemorySize : IEquatable<MemorySize>, IEquatable<long>, IC
 			"TiB" => GetByFormat(SizeFormat.Tebibyte),
 			_ => throw new ArgumentException("Unknown format"),
 		};
-		return dec.ToString();
+		return dec.ToString(decFormat);
 	}
 	public string ToString(string? format, IFormatProvider? formatProvider)
 		=> ToString(format);

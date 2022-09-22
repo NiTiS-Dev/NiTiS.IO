@@ -25,4 +25,9 @@ public abstract class IOPath : ISerializable
 	public const char UnixPathSeparator = ':';
 	public const char WindowsPathSeparator = ';';
 	public static readonly char PathSeparator = SPath.PathSeparator;
+
+	public static File CombinePathFile(params string[] paths)
+		=> new(SPath.Combine(paths));
+	public static Directory CombinePathDirectory(params string[] paths)
+		=> new(SPath.Combine(paths));
 }
