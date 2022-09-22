@@ -113,7 +113,7 @@ public class File : IOPath, ISerializable, IFormattable
 		if (format.StartsWith("Size"))
 		{
 			format = format.Substring(4);
-			if (format.StartsWith(':'))
+			if (format.StartsWith(":"))
 			{
 				format = format.Substring(1);
 				return Size.ToString(format);
