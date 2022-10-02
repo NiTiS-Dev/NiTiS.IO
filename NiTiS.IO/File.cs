@@ -97,6 +97,60 @@ public class File : IOPath, ISerializable, IFormattable
 		=> self.Open((System.IO.FileMode)mode);
 	public SFileStream Read()
 		=> self.OpenRead();
+	public string ReadAllText()
+	{
+		using SFileStream stream = Read();
+		using StreamReader reader = new(stream);
+
+		return reader.ReadToEnd();
+	}
+	public async Task<string> ReadAllTextAsync()
+	{
+		using SFileStream stream = Read();
+		using StreamReader reader = new(stream);
+
+		return await reader.ReadToEndAsync();
+	}
+	public byte[] ReadAllBytes()
+	{
+		using SFileStream stream = Read();
+
+		if (stream.Length > int.MaxValue)
+		{
+			using MemoryStream ms = new();
+
+			stream.CopyTo(ms);
+
+			return ms.ToArray();
+		}
+		else
+		{
+			using BinaryReader reader = new(stream);
+
+			return reader.ReadBytes((int)stream.Length);
+		}
+	}
+#if !NET48
+	public async Task<byte[]> ReadAllBytesAsync()
+	{
+		using SFileStream stream = Read();
+
+		if (stream.Length > int.MaxValue)
+		{
+			using MemoryStream ms = new();
+
+			await stream.CopyToAsync(ms);
+
+			return ms.ToArray();
+		}
+		else
+		{
+			byte[] arr = new byte[stream.Length];
+			await stream.ReadAsync(arr);
+			return arr;
+		}
+	}
+#endif
 	public SFileStream Write()
 		=> self.OpenWrite();
 	public SFileStream Append()
