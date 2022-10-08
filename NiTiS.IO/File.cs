@@ -193,7 +193,7 @@ public class File : IOPath, ISerializable, IFormattable
 	{
 		using SFileStream stream = Write();
 
-		await stream.WriteAsync(bytes);
+		await stream.WriteAsync(bytes, 0, bytes.Length);
 	}
 	public SFileStream Append()
 		=> self.Open(System.IO.FileMode.Append);
