@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace NiTiS.IO;
 
@@ -153,6 +154,47 @@ public class File : IOPath, ISerializable, IFormattable
 #endif
 	public SFileStream Write()
 		=> self.OpenWrite();
+	public void WriteAllText(string text)
+	{
+		using SFileStream stream = Write();
+		using StreamWriter writer = new(stream);
+
+		writer.Write(text);
+	}
+	public void WriteAllText(string text, Encoding encoding)
+	{
+		using SFileStream stream = Write();
+		using StreamWriter writer = new(stream, encoding);
+
+		writer.Write(text);
+	}
+	public async Task WriteAllTextAsync(string text, Encoding encoding)
+	{
+		using SFileStream stream = Write();
+		using StreamWriter writer = new(stream, encoding);
+
+		await writer.WriteAsync(text);
+	}
+	public void WriteAllBytes(byte[]  bytes)
+	{
+		using SFileStream stream = Write();
+
+		stream.Write(bytes, 0 , bytes.Length);
+	}
+#if !NET48
+	public void WriteAllBytes(ReadOnlySpan<byte> bytes)
+	{
+		using SFileStream stream = Write();
+
+		stream.Write(bytes);
+	}
+#endif
+	public async Task WriteAllBytesAsync(byte[] bytes)
+	{
+		using SFileStream stream = Write();
+
+		await stream.WriteAsync(bytes);
+	}
 	public SFileStream Append()
 		=> self.Open(System.IO.FileMode.Append);
 	public SFileStream Truncate()
