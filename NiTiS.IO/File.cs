@@ -77,6 +77,9 @@ public class File : IOPath, ISerializable, IFormattable
 	}
 	[DebuggerStepThrough]
 	public void Create()
+		=> self.Create().Dispose();
+	[DebuggerStepThrough]
+	public FileStream CreateOpen()
 		=> self.Create();
 	[DebuggerStepThrough]
 	public void Delete()
