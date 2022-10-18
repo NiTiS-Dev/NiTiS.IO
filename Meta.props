@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<Version>2.0.3</Version>
-		<TargetFrameworks>net6.0;netstandard2.1;netcoreapp3.1;net5.0;net48</TargetFrameworks>
+		<Version>2.0.4</Version>
+		<TargetFrameworks>net6.0;netstandard2.1;netcoreapp3.1;net48</TargetFrameworks>
 		<Version>$(Version)</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<PackageVersion>$(Version)</PackageVersion>

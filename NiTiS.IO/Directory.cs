@@ -33,7 +33,7 @@ public class Directory : IOPath, IFormattable
 	public override bool Hidden => self.Attributes.HasFlag(FileAttributes.Hidden);
 	public virtual bool IsRoot => SPath.IsPathRooted(self.FullName);
 	public MemorySize GetDirectorySize()
-		=> new(self.GetFiles("*", SearchOption.AllDirectories).Sum(x => x.Length));
+		=> new((ulong)self.GetFiles("*", SearchOption.AllDirectories).Sum(x => x.Length));
 
 	#region Created/Edited time
 	public DateTime CreationTime { get => self.CreationTime; set => self.CreationTime = value; }
@@ -118,8 +118,11 @@ public class Directory : IOPath, IFormattable
 		=> new(dir.Path);
 	public static explicit operator String(Directory dir)
 		=> dir.Path;
+	public static Directory GetTemp()
+		=> new(SPath.GetTempPath());
 
 	public const char UnuxSeparator = '/';
 	public const char WindowsSeparator = '\\';
 	public static readonly char Separator = SPath.DirectorySeparatorChar;
+	public static readonly char[] InvalidChars = SPath.GetInvalidPathChars();
 }

@@ -18,14 +18,12 @@ public abstract class IOPath : ISerializable
 		info.AddValue("path", Path);
 		info.AddValue("directory", IsDirectory);
 	}
-#if NET7_0_OR_GREATER
- 	public static T Combine<T>(Directory dir, params string[] args) where T : IOPath
-		=> new T()
-#endif
 	public const char UnixPathSeparator = ':';
 	public const char WindowsPathSeparator = ';';
+	public const char UnixVolumeSeparator = '/';
+	public const char WindowsVolumeSeparator = ':';
 	public static readonly char PathSeparator = SPath.PathSeparator;
-
+	public static readonly char VolumeSeparator = SPath.VolumeSeparatorChar;
 	public static File CombinePathFile(params string[] paths)
 		=> new(SPath.Combine(paths));
 	public static Directory CombinePathDirectory(params string[] paths)

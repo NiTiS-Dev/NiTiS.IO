@@ -32,7 +32,7 @@ public class File : IOPath, ISerializable, IFormattable
 	#region File-only
 	public string NameWithoutExtension => SPath.GetFileNameWithoutExtension(self.FullName);
 	public string Extension => self.Extension;
-	public MemorySize Size => new(self.Length);
+	public MemorySize Size => new((ulong)self.Length);
 	#endregion
 	#region Created/Edited time
 	public DateTime CreationTime { get => self.CreationTime; set => self.CreationTime = value; }
@@ -233,6 +233,9 @@ public class File : IOPath, ISerializable, IFormattable
 		}
 		throw new ArgumentException("Invalid format");
 	}
+	public static readonly char[] InvalidChars = SPath.GetInvalidPathChars();
+	public static File GetRandom() => new(SPath.GetRandomFileName());
+	public static File GetTemp() => new(SPath.GetTempFileName());
 	public override string ToString()
 		=> Path;
 
