@@ -38,7 +38,7 @@ jobs:
       - name: Github Upload
         run: |
           cd .pack/
-          dotnet nuget push ${{ matrix.project }}/*.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${GITHUB_TOKEN} --skip-duplicate
+          dotnet nuget push ${{ matrix.project }}/*.nupkg --source https://nuget.pkg.github.com/NiTiS-Dev/index.json --api-key ${GITHUB_TOKEN} --skip-duplicate
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
