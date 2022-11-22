@@ -1,8 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
 
 namespace NiTiS.IO;
 
@@ -10,30 +8,28 @@ namespace NiTiS.IO;
 /// Presentation of some directory
 /// </summary>
 [Serializable]
-public class Directory : IOPath, IFormattable
+public class Directory : IDirectory, IFormattable
 {
-	protected internal DirectoryInfo self;
-	public Directory(string path) : base()
+	protected internal readonly DirectoryInfo self;
+	public Directory(string path)
 	{
 		self = new(path);
 	}
-	public Directory(DirectoryInfo path) : base()
+	public Directory(DirectoryInfo path)
 	{
-		self = path;
+		self = path ?? new DirectoryInfo(string.Empty);
 	}
 
-	public override string Name => self.Name;
-	public override string Path => self.FullName;
-	public override bool IsDirectory => true;
-	public override Directory? Parent
-		=> self.Parent is null ? null :
-		new(self.Parent);
-	public override bool Exists => self.Exists;
-	public override bool Readonly => self.Attributes.HasFlag(FileAttributes.ReadOnly);
-	public override bool Hidden => self.Attributes.HasFlag(FileAttributes.Hidden);
-	public virtual bool IsRoot => SPath.IsPathRooted(self.FullName);
+	public string Name => self.Name;
+	public MemorySize Size => GetDirectorySize();
+	public string Path => self.FullName;
+	public bool IsRoot => SPath.IsPathRooted(self.FullName);
+	public IDirectory? Parent => new Directory(self.Parent);
+	public bool Exists => self.Exists;
 	public MemorySize GetDirectorySize()
-		=> new((ulong)self.GetFiles("*", SearchOption.AllDirectories).Sum(x => x.Length));
+		=> new(unchecked((ulong)GetNestedFiles().Sum(x => unchecked((long)x.Size.Bytes))));
+	public IEnumerable<IFile> GetNestedFiles(bool topLevelOnly = false)
+		=> self.GetFiles("*", topLevelOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories).Select(x => new File(x));
 
 	#region Created/Edited time
 	public DateTime CreationTime { get => self.CreationTime; set => self.CreationTime = value; }
@@ -41,63 +37,39 @@ public class Directory : IOPath, IFormattable
 	public DateTime CreationTimeUTC { get => self.CreationTimeUtc; set => self.CreationTimeUtc = value; }
 	public DateTime LastAccessTimeUTC { get => self.LastAccessTimeUtc; set => self.LastAccessTimeUtc = value; }
 	#endregion
-
-	public File File(string name)
-		=> new(SPath.Combine(self.FullName, name));
-	public Directory SubDirectory(string name)
-		=> new(SPath.Combine(self.FullName, name));
-
-	/// <summary>
-	/// Change the pointer directory name (does not change the name of the real directory)
-	/// </summary>
-	/// <param name="newName">New name of the directory</param>
-	public void VirtualRename(string newName)
+	public bool Create()
 	{
-		self = new DirectoryInfo(ItselfPathWithOtherName(newName));
-	}
-	/// <summary>
-	/// Changes the name of a directory
-	/// </summary>
-	/// <param name="newName">New name of the directory</param>
-	public void Rename(string newName)
-	{
-		string newPath = ItselfPathWithOtherName(newName);
-		self.MoveTo(newPath);
-	}
-	protected string ItselfPathWithOtherName(string newName)
-		=> (self.Parent is null ? Separator.ToString() : self.Parent.FullName + Separator) + newName;
-	/// <summary>
-	/// Move the pointer directory (does not change the name of the real directory)
-	/// </summary>
-	/// <param name="dest">New path of the directory</param>
-	public void VirtualMove(string dest)
-	{
-		self = new DirectoryInfo(dest);
-	}
-	/// <summary>
-	/// Move the directory
-	/// </summary>
-	/// <param name="dest">New path of the directory</param>
-	public void Move(string dest)
-	{
-		self.MoveTo(dest);
-	}
-	public void Create()
-		=> self.Create();
-	public void Delete()
-		=> self.Delete();
-	public bool TryDelete()
-	{
+		if (self.Exists)
+			return false;
 		try
 		{
-			Delete();
+			self.Create();
 			return true;
 		}
-		catch (IOException)
+		catch (Exception)
 		{
 			return false;
 		}
 	}
+	public bool Delete()
+	{
+		if (!self.Exists)
+			return false;
+		try
+		{
+			self.Delete();
+			return true;
+		}
+		catch (Exception)
+		{
+			return false;
+		}
+	}
+	public IFile File(string name)
+		=> new File(SPath.Combine(self.FullName, name));
+	public IDirectory SubDirectory(string name)
+		=> new Directory(SPath.Combine(self.FullName, name));
+
 	public string ToString(string? format, IFormatProvider? formatProvider)
 		=> ToString(format);
 	public string ToString(string format)
@@ -116,7 +88,7 @@ public class Directory : IOPath, IFormattable
 		=> Path;
 	public static explicit operator File(Directory dir)
 		=> new(dir.Path);
-	public static explicit operator String(Directory dir)
+	public static explicit operator string(Directory dir)
 		=> dir.Path;
 	public static Directory GetTemp()
 		=> new(SPath.GetTempPath());

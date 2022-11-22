@@ -9,9 +9,9 @@ namespace NiTiS.IO;
 /// Provides methods for action with existing file
 /// </summary>
 [Serializable]
-public class File : IOPath, ISerializable, IFormattable
+public class File : IFile, IFormattable
 {
-	protected internal FileInfo self;
+	protected internal readonly FileInfo self;
 	public File(string path) : base()
 	{
 		self = new(path);
@@ -20,15 +20,14 @@ public class File : IOPath, ISerializable, IFormattable
 	{
 		self = path;
 	}
-	public override string Name => self.Name;
-	public override string Path => self.FullName;
-	public override bool IsDirectory => false;
-	public override Directory? Parent
+	public string Name => self.Name;
+	public string Path => self.FullName;
+	public IDirectory? Parent
 		=> self.Directory is null ? null
-		: new(self.Directory);
-	public override bool Exists => self.Exists;
-	public override bool Readonly => self.Attributes.HasFlag(FileAttributes.ReadOnly);
-	public override bool Hidden => self.Attributes.HasFlag(FileAttributes.Hidden);
+		: new Directory(self.Directory);
+	public bool Exists => self.Exists;
+	public bool Readonly => self.Attributes.HasFlag(FileAttributes.ReadOnly);
+	public bool Hidden => self.Attributes.HasFlag(FileAttributes.Hidden);
 	#region File-only
 	public string NameWithoutExtension => SPath.GetFileNameWithoutExtension(self.FullName);
 	public string Extension => self.Extension;
@@ -41,14 +40,6 @@ public class File : IOPath, ISerializable, IFormattable
 	public DateTime LastAccessTimeUTC { get => self.LastAccessTimeUtc; set => self.LastAccessTimeUtc = value; }
 	#endregion
 	/// <summary>
-	/// Change the pointer file name (does not change the name of the real file)
-	/// </summary>
-	/// <param name="newName">New name of the file</param>
-	public void VirtualRename(string newName)
-	{
-		self = new FileInfo(ItselfPathWithOtherName(newName));
-	}
-	/// <summary>
 	/// Changes the name of the file
 	/// </summary>
 	/// <param name="newName">New name of the file</param>
@@ -60,14 +51,6 @@ public class File : IOPath, ISerializable, IFormattable
 	protected string ItselfPathWithOtherName(string newName)
 		=> (self.Directory is null ? Directory.Separator.ToString() : self.Directory.FullName + Directory.Separator) + newName;
 	/// <summary>
-	/// Move the pointer file (does not change the name of the real file)
-	/// </summary>
-	/// <param name="dest">New path of the file</param>
-	public void VirtualMove(string dest)
-	{
-		self = new FileInfo(dest);
-	}
-	/// <summary>
 	/// Move the file
 	/// </summary>
 	/// <param name="dest">New path of the file</param>
@@ -76,27 +59,38 @@ public class File : IOPath, ISerializable, IFormattable
 		self.MoveTo(dest);
 	}
 	[DebuggerStepThrough]
-	public void Create()
-		=> self.Create().Dispose();
-	[DebuggerStepThrough]
-	public FileStream CreateOpen()
-		=> self.Create();
-	[DebuggerStepThrough]
-	public void Delete()
-		=> self.Delete();
-	[DebuggerStepThrough]
-	public bool TryDelete()
+	public bool Create()
 	{
+		if (self.Exists)
+			return false;
 		try
 		{
-			Delete();
+			self.Create()?.Dispose();
 			return true;
 		}
-		catch(Exception)
+		catch (Exception)
 		{
 			return false;
 		}
 	}
+	[DebuggerStepThrough]
+	public bool Delete()
+	{
+		if (!self.Exists)
+			return false;
+		try
+		{
+			self.Delete();
+			return true;
+		}
+		catch (Exception)
+		{
+			return false;
+		}
+	}
+	[DebuggerStepThrough]
+	public FileStream CreateOpen()
+		=> self.Create();
 	public SFileStream Open(FileMode mode)
 		=> self.Open((System.IO.FileMode)mode);
 	public SFileStream Read()

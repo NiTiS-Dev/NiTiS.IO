@@ -9,5 +9,5 @@
 		<PackageTags>NiTiS;IO;File;Directory</PackageTags>
 	</PropertyGroup>
 	
-	<Import Project="../Meta.props"/>
+	<Import Project="../Meta.props" />
 </Project>
