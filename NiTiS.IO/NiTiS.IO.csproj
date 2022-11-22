@@ -2,8 +2,7 @@
 	<PropertyGroup>
 		<AssemblyName>NiTiS.IO</AssemblyName>
 
-		<Description>
-			Library for managing files, directories and streams
+		<Description>Library for managing files, directories and streams
 		</Description>
 		
 		<PackageTags>NiTiS;IO;File;Directory</PackageTags>
