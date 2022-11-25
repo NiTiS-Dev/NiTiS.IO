@@ -79,9 +79,9 @@ public readonly struct MemorySize: IEquatable<MemorySize>, IEquatable<ulong>, IC
 		SizeFormat.Terabyte => bytes / 1_000_000_000_000m,
 
 		SizeFormat.Kibibyte => bytes / 1024m,
-		SizeFormat.Mebibyte => bytes / 1024m * 1024m,
-		SizeFormat.Gibibyte => bytes / 1024m * 1024m * 1024m,
-		SizeFormat.Tebibyte => bytes / 1024m * 1024m * 1024m * 1024m,
+		SizeFormat.Mebibyte => bytes / (1024m * 1024m),
+		SizeFormat.Gibibyte => bytes / (1024m * 1024m * 1024m),
+		SizeFormat.Tebibyte => bytes / (1024m * 1024m * 1024m * 1024m),
 		_ => bytes
 	};
 	public static MemorySize GetSizeByFormat(ulong size, SizeFormat format)
