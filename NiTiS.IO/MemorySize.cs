@@ -1,9 +1,19 @@
-﻿namespace NiTiS.IO;
+﻿using System.Numerics;
 
-public readonly struct MemorySize: IEquatable<MemorySize>, IEquatable<ulong>, IComparable<MemorySize>, IComparable<ulong>, IFormattable
+namespace NiTiS.IO;
+
+public readonly struct MemorySize : IEquatable<MemorySize>, IEquatable<ulong>, IComparable<MemorySize>, IComparable<ulong>, IFormattable
+#if NET7_0_OR_GREATER
+	,
+	IComparisonOperators<MemorySize, MemorySize, bool>,
+	IAdditionOperators<MemorySize, MemorySize, MemorySize>,
+	IDecrementOperators<MemorySize>,
+	IIncrementOperators<MemorySize>,
+	ISubtractionOperators<MemorySize, MemorySize, MemorySize>
+#endif
 {
 	public readonly ulong Bytes;
-	#region Consts
+#region Consts
 	public static MemorySize Zero => new(0);
 	public static MemorySize Byte => new(1);
 
@@ -16,7 +26,7 @@ public readonly struct MemorySize: IEquatable<MemorySize>, IEquatable<ulong>, IC
 	public static MemorySize Mebibyte => new(1, SizeFormat.Mebibyte);
 	public static MemorySize Gibibyte => new(1, SizeFormat.Gibibyte);
 	public static MemorySize Tebibyte => new(1, SizeFormat.Tebibyte);
-	#endregion Consts
+#endregion Consts
 	public MemorySize(ulong bytes)
 	{
 		this.Bytes = bytes;
