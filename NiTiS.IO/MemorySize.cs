@@ -1,8 +1,17 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace NiTiS.IO;
 
-public readonly struct MemorySize : IEquatable<MemorySize>, IEquatable<ulong>, IComparable<MemorySize>, IComparable<ulong>, IFormattable
+/// <summary>
+/// Size of some memory
+/// </summary>
+public readonly struct MemorySize :
+	IEquatable<MemorySize>,
+	IEquatable<ulong>,
+	IComparable<MemorySize>,
+	IComparable<ulong>,
+	IFormattable
 #if NET7_0_OR_GREATER
 	,
 	IComparisonOperators<MemorySize, MemorySize, bool>,

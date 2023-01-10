@@ -2,15 +2,20 @@
 
 namespace NiTiS.IO;
 
-public interface IDirectory : IPath
+public interface IDirectory
 {
-	public string Name { get; }
-	public MemorySize Size { get; }
-	public bool IsRoot { get; }
-	public bool Exists { get; }
-	public IEnumerable<IFile> GetNestedFiles(bool topLevelOnly = false);
-	public bool Delete();
-	public bool Create();
-	public IDirectory SubDirectory(string name);
-	public IFile File(string name);
+	/// <summary>
+	/// Directory name
+	/// </summary>
+	string Name { get; }
+	/// <summary>
+	/// Directory path
+	/// </summary>
+	string Path { get; }
+	/// <summary>
+	/// Directory's father
+	/// </summary>
+	IDirectory? Parent { get; }
+	IEnumerable<IFile>? GetNestedFiles(bool recursive);
+	IEnumerable<IDirectory>? GetNestedDirectories(bool recursive);
 }

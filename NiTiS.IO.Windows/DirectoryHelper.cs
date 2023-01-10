@@ -17,9 +17,9 @@ public static class DirectoryHelper
 	[SupportedOSPlatform("Windows")]
 #endif
 	[DebuggerStepThrough]
-	public static Directory CreateSymbolicLink(this Directory directory, File linkFile)
+	public static IRealDirectory CreateSymbolicLink(this IRealDirectory directory, IRealFile linkFile)
 	{
-		if (1 != WindowsAPI.CreateSymbolicLink(linkFile.Path, directory.self.FullName, SymbolicLinkOptions.ToDirectory))
+		if (1 != WindowsAPI.CreateSymbolicLink(linkFile.Path, directory.Path, SymbolicLinkOptions.ToDirectory))
 		{
 			int errCode = Marshal.GetLastWin32Error();
 			if (errCode == 183)
@@ -27,6 +27,6 @@ public static class DirectoryHelper
 			throw new IOException("Unable to create symbolic link, error code: " + errCode);
 		}
 
-		return new(linkFile.Path);
+		return new RealDirectory(linkFile.Path);
 	}
 }

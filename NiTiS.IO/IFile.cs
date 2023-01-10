@@ -1,11 +1,30 @@
-﻿namespace NiTiS.IO;
+﻿using System.IO;
 
-public interface IFile : IPath
+namespace NiTiS.IO;
+
+public interface IFile
 {
-	public string Name { get; }
-	public string Extension { get; }
-	public bool Exists { get; }
-	public MemorySize Size { get; }
-	public bool Create();
-	public bool Delete();
+	/// <summary>
+	/// File name
+	/// </summary>
+	string Name { get; }
+	/// <summary>
+	/// Path to file
+	/// </summary>
+	string Path { get; }
+	/// <summary>
+	/// File path part after dot
+	/// </summary>
+	string? Extension { get; }
+
+	IDirectory? Parent { get; }
+
+	/// <summary>
+	/// Creates file
+	/// </summary>
+	/// <param name="openMode">Write or Read</param>
+	/// <param name="location">Location to begin write or read</param>
+	/// <param name="clearData">Rewrite whole file when <see langword="true" /></param>
+	/// <returns></returns>
+	Stream? Open(FileOpenMode openMode, FileOpenLocation location, bool clearData);
 }

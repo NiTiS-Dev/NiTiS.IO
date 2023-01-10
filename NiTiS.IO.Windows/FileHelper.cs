@@ -17,9 +17,9 @@ public static class FileHelper
 	[SupportedOSPlatform("Windows")]
 #endif
 	[DebuggerStepThrough]
-	public static File CreateSymbolicLink(this File file, File linkFile)
+	public static IRealFile CreateSymbolicLink(this IRealFile file, IRealFile linkFile)
 	{
-		if (1 != WindowsAPI.CreateSymbolicLink(linkFile.Path, file.self.FullName, SymbolicLinkOptions.ToFile))
+		if (1 != WindowsAPI.CreateSymbolicLink(linkFile.Path, file.Path, SymbolicLinkOptions.ToFile))
 		{
 			int errCode = Marshal.GetLastWin32Error();
 			if (errCode == 183)
